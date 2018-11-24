@@ -1,0 +1,6 @@
+backprop.ipynb
+backprop*.ipynb
+boludezes_con_autograd.ipynb
+sparse_matrices.ipynb
+synapses/__pycache__
+__pycache__
