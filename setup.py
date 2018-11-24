@@ -8,12 +8,12 @@ in the proof-of-concept code released with the paper.
 
 setup(
     name='synapses',
-    version='0.0.1',
+    version='0.0.11',
     description='Adaptive Sparse Connectivity for Neural Networks in PyTorch',
     long_description=long_desc,
     author='Michael Klear',
     author_email='michael.r.klear@gmail.com',
-    url='https://github.com/AlliedToasters/synapses/archive/v0.0.1.tar.gz',
+    url='https://github.com/AlliedToasters/synapses/archive/v0.0.11.tar.gz',
     install_requires=['torch'],
     packages=['synapses']
 )
