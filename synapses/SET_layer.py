@@ -26,14 +26,39 @@ class SETLayer(nn.Module):
             Default: ``True``
 
     Attributes:
-        weight: weight parameters (1-D vector)
+        sparsity: the sparsity of the weight matrix (directly set or
+            determined by the Erdös–Rényi random graph propability distribution)
+        n_params: the number of parameters in the sparse weight matrix
             `(out_features x in_features x (1-sparsity))`
+        weight: weight parameters (vector of shape (n_params,))
+        indim: set by `in_features`
+        outdim: set by `out_features`
+        
+        
+        connections: A torch tensor of shape (n_params, 2). Indicates
+        the input node and output node for each weight parameter.
+        
         bias: the learnable bias of the module of shape `(out_features)`
+
+    Methods:
+        grow_connections(self, indices=None): Randomly assigns connections
+        specified by indices (indexed into parameter vector). If no indices passed,
+        randomly assigns all connections 
+        
+        zero_connections(self): Sets parameters selected by zeta criterion
+        (roughly proportion zeta of smallest magnitude weights) to zero.
+        
+        evolve_connections(self, init=True): Evolves connections selected by
+        zeta criterion by reassigning them. If init set to True, re-initializes
+        parameters with same initial distribution as init. Else, sets these parameters
+        to zero.
+        
+        other methods are "private" (TODO: rename private methods)
 
     Examples::
 
-        >>> m = nn.SET_Layer(128, 1024)
-        >>> input = torch.randn(32, 128)
+        >>> m = SETLayer(1024, 1024)
+        >>> input = torch.randn(128, 1024)
         >>> output = m(input)
         >>> print(output.size())
     """
