@@ -14,6 +14,6 @@ setup(
     author='Michael Klear',
     author_email='michael.r.klear@gmail.com',
     url='https://github.com/AlliedToasters/synapses/archive/v0.0.1.tar.gz',
-    install_requires=['pytorch>=0.4.1'],
+    install_requires=['pytorch'],
     packages=['synapses']
 )
