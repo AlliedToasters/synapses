@@ -19,6 +19,8 @@ To use, install pytorch and install synapses with:<br>
 pip install synapses
 `
 
+for a usage demonstration, take a look at the [MNIST example notebook](MNIST_demo.ipynb).
+
 TODO:<br>
  - Build unit testing script that includes time benchmarking
  - Improve computational efficiency
