@@ -22,5 +22,6 @@ pip install synapses
 for a usage demonstration, take a look at the [MNIST example notebook](MNIST_demo.ipynb).
 
 TODO:<br>
+ - Fix bug with optimizers: Only vanilla SGD is working right; need to reset momentum buffers when resetting connections.
  - Build unit testing script that includes time benchmarking
  - Improve computational efficiency
