@@ -98,6 +98,10 @@ class SETLayer(nn.Module):
         else:
             self.register_parameter('bias', None)
         self.reset_parameters()
+        
+        #if using an optimizer with buffers, please assign it to this var
+        #for housekeeping.
+        self.optimizer = None
             
     def grow_connections(self, indices=None):
         """Randomly assigns connections."""
@@ -200,8 +204,42 @@ class SETLayer(nn.Module):
         else:
             new_values = torch.zeros_like(indices)
         self.weight.data[indices] = new_values
+        if self.optimizer is not None:
+            #Here we erase optimizer buffers.
+            self._clear_buffers(indices)
         self.grow_connections(indices)
         self.generate_zmap()
+        
+    def _clear_buffers(self, indices):
+        """
+        Resets buffers from memory according to passed indices.
+        When connections are reset, parameters should be treated
+        as freshly initialized.
+        """
+        zeros = torch.zeros_like(indices).float()
+        ones = torch.ones_like(indices).float()
+        buffers = list(self.optimizer.state[self.weight])
+        for buffer in buffers:
+            if buffer == 'momentum_buffer':
+                self.optimizer.state[self.weight]['momentum_buffer'][indices] = zeros
+            elif buffer == 'step_size':
+                #set to learning rate
+                vals = ones * optimizer.defaults['lr']
+                self.optimizer.state[self.weight]['step_size'][indices] = vals
+            elif buffer == 'prev':
+                self.optimizer.state[self.weight]['prev'][indices] = zeros
+            elif buffer == 'square_avg' or \
+                buffer == 'exp_avg' or \
+                buffer == 'exp_avg_sq' or \
+                buffer == 'exp_inf':
+                #use average of all for very rough estimate of stable value
+                vals = ones * torch.mean(self.optimizer.state[self.weight][buffer])
+                self.optimizer.state[buffer] = vals
+            elif buffer == 'acc_delta':
+                #set to learning rate
+                self.optimizer.state[self.weight]['step_size'][indices] = zeros
+            #elif buffer == ''
+                
         
     def generate_zmap(self):
         """Generates an indexing map for forward pass"""
