@@ -31,5 +31,6 @@ layer.optimizer = my_optimizer
 With vanilla SGD (no momentum), this step is not necessary.
 
 TODO:<br>
+ - Fix bug with bias: currently SETLayer without bias is not working properly
  - Build unit testing script that includes time benchmarking
  - Improve computational efficiency
