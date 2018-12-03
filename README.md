@@ -28,9 +28,8 @@ Synapses recycles parameters after resetting connections; many optimizers (SGD w
 my_optimizer = torch.optim.SGD(params=model.parameters(), lr=1e-3, momentum=.9)
 layer.optimizer = my_optimizer
 ```
-With vanilla SGD, this step is not necessary.
+With vanilla SGD (no momentum), this step is not necessary.
 
 TODO:<br>
- - Fix bug with optimizers: Only vanilla SGD is working right; need to reset momentum buffers when resetting connections.
  - Build unit testing script that includes time benchmarking
  - Improve computational efficiency
