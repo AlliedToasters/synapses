@@ -24,10 +24,10 @@ for a usage demonstration, take a look at the [MNIST example notebook](MNIST_dem
 ## Note about Optimizers
 Synapses recycles parameters after resetting connections; many optimizers (SGD with momentum, RMSprop, adaptive learning rate methods) use a buffer with memory about previous steps to compute weight updates. It's important to treat these buffers properly when re-initializing parameters. Synapses will take care of this, but to do so you must pass your optimizer object to your SETLayers after initializing the optimizer. Simply do (something like):
 
-`
+```
 my_optimizer = torch.optim.SGD(params=model.parameters(), lr=1e-3, momentum=.9)
 layer.optimizer = my_optimizer
-`
+```
 With vanilla SGD, this step is not necessary.
 
 TODO:<br>
