@@ -1,6 +1,7 @@
 import torch
 from torch import nn
 import torch.nn.functional as F
+from torch_scatter import scatter_add
 
 import math
 
@@ -243,19 +244,10 @@ class SETLayer(nn.Module):
         
     def generate_zmap(self):
         """Generates an indexing map for forward pass"""
-        z_map = []
-        longest = 0
-        for i in range(self.outdim):
-            prms = self.connections[:, 1] == i
-            indcs = torch.nonzero(prms).reshape(-1).int()
-            longest = max(longest, len(indcs))
-            z_map.append(indcs)
-
-        z_inds = (torch.ones((self.outdim, longest)) * self.n_params).int()
-        for i, inds in enumerate(z_map):
-            z_inds[i, :len(inds)] = inds
-
-        self.zmap = z_inds.long()
+        #set indices for input --> k-vector
+        self.inds = self.connections[:, 0].long()
+        #get indices for k-vector --> output
+        self.inds_out = self.connections[:, 1].long()
 
     def reset_parameters(self):
         stdv = math.sqrt(2/self.indim)
@@ -264,10 +256,7 @@ class SETLayer(nn.Module):
             self.bias.data = torch.randn(self.outdim) * stdv
 
     def forward(self, x):
-        inds = self.connections[:, 0].long()
-        k = x[:, inds]
+        k = x[:, self.inds]
         k = k * self.weight
-        k = torch.cat([k, torch.zeros(k.shape[0], 1)], 1)
-        zmat = k[:, self.zmap]
-        z = zmat.sum(dim=2)
+        z = scatter_add(k, self.inds_out)
         return z + self.bias
